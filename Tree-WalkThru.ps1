@@ -10,7 +10,7 @@
 Trap {"Error !"; $_.exception;  $error; 
         Write-Warning "Pause ..........."
  }
-clear All
+Clear-Host
 $error.Clear()
  
 
@@ -39,11 +39,21 @@ Class QFile_SYSTEM
     {
 
         $TabLevel+=1
-        $subdirs = dir $path | where {$_.GetType() -match "DirectoryInfo"}
+        $subdirs = Get-ChildItem $path | Where-Object {$_.GetType() -eq "DirectoryInfo"}
+        
+        foreach ($dir in (Get-ChildItem $path)){
+            Write-Host $dir.FullName
+            Write-Host $dir.GetType()
+            Write-Host ($dir.GetType() -match "DirectoryInfo")
+            Write-Host ($dir.GetType -eq "DirectoryInfo")
+            Write-Host ($dir.GetType -ieq "DirectoryInfo")
+        }
+
+
         if ($subdirs) {
             foreach ($subdir in $subdirs) {
 
-                $subfiles=dir $subdir.fullname | where {$_.GetType() -match "FileInfo"}
+                $subfiles=Get-ChildItem $subdir.fullname | Where-Object {$_.GetType() -match "FileInfo"}
                 [int]$subcount=$subfiles.count
                 Write-Host  "DIRECTORY[$TabLevel]-$($subdir.fullname)" -foregroundcolor red
 
@@ -64,7 +74,7 @@ Class QFile_SYSTEM
 
         if ($subdirs){
             foreach ($subdir in $subdirs) {
-                $subfiles=dir $subdir.fullname | where {$_.GetType() -match "FileInfo"}
+                $subfiles=Get-ChildItem $subdir.fullname | Where-Object {$_.GetType() -match "FileInfo"}
                 [int]$subcount=$subfiles.count
                 Write-Host  "DIRECTORY[$TabLevel]-$($subdir.fullname)" -foregroundcolor Yellow
 
@@ -93,8 +103,8 @@ Class QFile_SYSTEM
             return 1
         }
 
-        $data=dir $path
-        $files=$data | where {$_.GetType() -match "FileInfo"}
+        $data=Get-ChildItem $path
+        $files=$data | Where-Object {$_.GetType() -match "FileInfo"}
         #enumerate child folders
        
         [System.IO.FileInfo]$f = $null
@@ -117,7 +127,7 @@ Class QFile_SYSTEM
 }
 
 
-[string]$path = 'D:\Powershell_Project\TREE_WALK\'
+[string]$path = 'D:\Powershell_Project'
 
 #[string]$path = 'S:\'
 
